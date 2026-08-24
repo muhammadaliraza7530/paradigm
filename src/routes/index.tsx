@@ -6,6 +6,7 @@ import { ShowcaseVideo } from "@/components/site/ShowcaseVideo";
 import { HeroSlideshow } from "@/components/site/HeroSlideshow";
 import { ShowcaseMarquee } from "@/components/site/ShowcaseMarquee";
 import { TestimonialsMarquee } from "@/components/site/TestimonialsMarquee";
+import { Marquee } from "@/components/site/Marquee";
 import { Wordmark } from "@/components/site/Wordmark";
 
 
@@ -378,12 +379,12 @@ function Home() {
             <p className="text-center text-xs font-bold uppercase tracking-[0.35em] text-primary">
               Trust and worth · Our clients
             </p>
-            <div className="mt-10 grid grid-cols-2 items-center gap-6 sm:grid-cols-4">
-              {CLIENTS.map((c, i) => (
-                <div
-                  key={c + i}
-                  className="flex h-24 items-center justify-center rounded-2xl bg-white/95 p-4 shadow-sm ring-1 ring-border transition-transform hover:-translate-y-1"
-                >
+            <Marquee
+              speed={180}
+              className="mt-10"
+              trackClassName="items-center gap-6 px-5 lg:px-8"
+              items={CLIENTS.map((c) => (
+                <div className="flex h-24 w-48 items-center justify-center rounded-2xl bg-white/95 p-4 shadow-sm ring-1 ring-border transition-transform hover:-translate-y-1 sm:w-56">
                   <img
                     src={c}
                     alt="Client logo"
@@ -393,7 +394,7 @@ function Home() {
                   />
                 </div>
               ))}
-            </div>
+            />
           </Reveal>
         </div>
       </section>

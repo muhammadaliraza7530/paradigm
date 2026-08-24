@@ -44,7 +44,7 @@ export const SERVICES: Service[] = [
   {
     slug: "civil-construction",
     title: "Civil Construction",
-    image: "/images/civil-construction.jpg",
+    image: "/images/civil.jpg",
     short:
       "We understand the importance of creating spaces that not only meet your needs but exceed your expectations.",
     body: [
@@ -89,7 +89,8 @@ export const SERVICES: Service[] = [
     slug: "mep",
     title: "Mechanical, Electrical, & Plumbing",
     image: "/images/mep.jpg",
-    short: "Cost-efficient mechanical, electrical and plumbing solutions built around your property.",
+    short:
+      "Cost-efficient mechanical, electrical and plumbing solutions built around your property.",
     body: [
       "Paradigm offers a wealth of experience in delivering top-notch mechanical, electrical and plumbing solutions. With a proven track record of successful projects and a vast portfolio, the company offers cost-efficient MEP services designed to meet the specific needs of your home or business.",
       "Whether you're looking to upgrade your existing systems or install new ones, Paradigm has the knowledge and expertise to ensure your property is equipped with the latest technologies — all while working within your budget constraints.",
@@ -97,7 +98,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "mechanical-work",
-    title: "Mechanical Work",
+    title: "Fabrication Work",
     image: "/images/mechanical.jpg",
     short:
       "Consultation, design and build solutions for commercial, industrial and institutional facilities.",
@@ -181,18 +182,6 @@ export const PROJECTS: Project[] = [
 
 export const TESTIMONIALS = [
   {
-    name: "Malik Adnan",
-    role: "CEO, Prime Associates",
-    quote:
-      "Paradigm is extremely professional and easy to work with. They are constantly learning the new trends in the market and offer unique ideas on how to make your project your own!",
-  },
-  {
-    name: "Nouman Aslam",
-    role: "CEO, Real Solutions",
-    quote:
-      "Paradigm did a complete build out of our basement. Their quality of work is superior.",
-  },
-  {
     name: "Qadafiullah",
     role: "CEO, The Zifaq Pvt Ltd",
     quote:
@@ -226,6 +215,8 @@ export const CLIENTS = [
   "/images/client-2.png",
   "/images/client-3.png",
   "/images/client-4.png",
+  "/images/fwo.jpg",
+  "/images/mes.jpg",
 ];
 
 export const WA_NUMBER = SITE.uanTel.replace(/[^0-9]/g, "");
