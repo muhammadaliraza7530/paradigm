@@ -1,6 +1,8 @@
 import { SITE, waLink } from "@/lib/site-content";
 
-const WA_LINK = waLink(`Hello ${SITE.name}, I'd like to discuss a construction project.`);
+const WA_LINK = waLink(
+  `Hello Paradigm Design & Construct(SMC-Pvt.)Ltd. I'd like to discuss a construction project.`,
+);
 
 export function CallFloat() {
   return (

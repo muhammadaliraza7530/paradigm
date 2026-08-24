@@ -87,7 +87,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "mep",
-    title: "MEP (Mechanical & Plumbing)",
+    title: "Mechanical, Electrical, & Plumbing",
     image: "/images/mep.jpg",
     short: "Cost-efficient mechanical, electrical and plumbing solutions built around your property.",
     body: [
@@ -130,19 +130,19 @@ export const SERVICES: Service[] = [
 
 export const PROJECTS: Project[] = [
   {
-    title: "AKAS Mall",
+    title: "Shell Site I-8 Markaz Islamabad",
     location: "Bahria Enclave",
     image: "/newProjects/newProject1.jpeg",
     alt: "Completed commercial mall with premium retail frontage",
   },
   {
-    title: "Shell I-8 Markaz",
+    title: "Petrol Pump Site Islamabad",
     location: "Islamabad",
     image: "/newProjects/newProject2.jpeg",
     alt: "Finished mixed-use plaza at Shell I-8 Markaz",
   },
   {
-    title: "Capital Smart Villas",
+    title: "Commercial Site",
     location: "Islamabad",
     image: "/newProjects/newProject3.jpeg",
     alt: "Completed luxury villa development in Islamabad",
@@ -209,7 +209,7 @@ export const TESTIMONIALS = [
 export const FAQS = [
   {
     q: "What kind of construction does Paradigm Design & Construct specialize in?",
-    a: "Paradigm Design & Construct specializes in industrial construction, civil construction, architectural development, infrastructure, solar systems, mechanical work, MEP (Mechanical & Plumbing) and HVAC systems.",
+    a: "Paradigm Design & Construct specializes in industrial construction, civil construction, architectural development, infrastructure, solar systems, mechanical work, Mechanical, Electrical, & Plumbing and HVAC systems.",
   },
   {
     q: "Does Paradigm Design & Construct have its own crew, or does it hire subcontractors?",

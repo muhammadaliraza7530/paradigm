@@ -62,6 +62,12 @@ function Home() {
               A top-tier construction company based in Islamabad, Pakistan, with over 10 years of
               experience in the industry.
             </p>
+            <p
+              className="animate-rise-in mt-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary"
+              style={{ animationDelay: "300ms" }}
+            >
+              Featured project — Compassion Plaza
+            </p>
 
             <div
               className="animate-rise-in mt-10 flex flex-wrap gap-4"

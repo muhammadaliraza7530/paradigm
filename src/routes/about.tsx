@@ -49,7 +49,7 @@ function About() {
         eyebrow="The company"
         title="Turning dreams into reality"
         intro="A top-tier construction company based in Islamabad, Pakistan, with over 10 years of experience in the industry."
-        image="/images/architecture.png"
+        image="/images/architecture.jpg"
       >
         <a
           href="/Paradigm Company Profile.l.pdf"
