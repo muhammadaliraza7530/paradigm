@@ -131,14 +131,12 @@ function Home() {
                   ),
                 )}
               </ul>
-              <a
-                href={waLink("Hello Paradigm, I would like to work with you on a project.")}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/about"
                 className="btn-shake mt-10 inline-flex items-center gap-2 border border-primary px-7 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
               >
                 Work with us<ArrowRight className="size-4" />
-              </a>
+              </Link>
             </Reveal>
           </div>
         </div>
@@ -235,14 +233,12 @@ function Home() {
               <p className="mt-3 text-sm text-muted-foreground">
                 Experience the Paradigm, where quality meets perfection.
               </p>
-              <a
-                href={waLink("Hello Paradigm, I would like to get in touch about a project.")}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/contact"
                 className="btn-shake mt-7 inline-flex items-center gap-2 border border-primary bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
               >
                 Get in touch<ArrowRight className="size-4" />
-              </a>
+              </Link>
             </LitPanel>
           </Reveal>
         </div>
@@ -324,15 +320,13 @@ function Home() {
                   Book a focused consultation in Islamabad or online. Bring your plot details and leave
                   with a clear roadmap for structure, MEP, HVAC and finishing.
                 </p>
-                <a
-                  href={waLink("Hello Paradigm, I would like to schedule a meeting with your engineers.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/contact"
                   className="btn-shake mt-8 inline-flex items-center gap-2 rounded-full border border-primary bg-primary px-5 py-3 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary sm:px-7 sm:py-3.5 sm:text-xs sm:tracking-[0.18em]"
                 >
                   Schedule your meeting
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                </a>
+                </Link>
               </div>
             </LitPanel>
 
@@ -356,15 +350,13 @@ function Home() {
                   Architects, brokers, suppliers and subcontractors can join our partner network,
                   refer quality projects and grow with a trusted construction team.
                 </p>
-                <a
-                  href={waLink("Hello Paradigm, I am interested in becoming an affiliate partner.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/contact"
                   className="btn-shake mt-8 inline-flex items-center gap-2 rounded-full border border-primary px-5 py-3 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground sm:px-7 sm:py-3.5 sm:text-xs sm:tracking-[0.18em]"
                 >
                   Become our partner
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                </a>
+                </Link>
               </div>
             </LitPanel>
 

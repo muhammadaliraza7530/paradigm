@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Reveal } from "./Reveal";
 
 export function PageHero({
@@ -5,11 +6,13 @@ export function PageHero({
   title,
   intro,
   image,
+  children,
 }: {
   eyebrow: string;
   title: string;
   intro?: string;
   image: string;
+  children?: ReactNode;
 }) {
   return (
     <section className="relative flex min-h-[58vh] items-end overflow-hidden pt-20">
@@ -34,7 +37,13 @@ export function PageHero({
             {intro}
           </p>
         )}
+        {children && (
+          <div className="animate-rise-in mt-8" style={{ animationDelay: "300ms" }}>
+            {children}
+          </div>
+        )}
       </div>
     </section>
   );
 }
+

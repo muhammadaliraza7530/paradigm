@@ -50,7 +50,15 @@ function About() {
         title="Turning dreams into reality"
         intro="A top-tier construction company based in Islamabad, Pakistan, with over 10 years of experience in the industry."
         image="/images/architecture.png"
-      />
+      >
+        <a
+          href="/Paradigm Company Profile.l.pdf"
+          download
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+        >
+          Company details
+        </a>
+      </PageHero>
 
       <section className="py-20 lg:py-28">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:px-8">
