@@ -37,6 +37,7 @@ export type Project = {
   title: string;
   location: string;
   image: string;
+  images: string[];
   alt: string;
 };
 
@@ -131,52 +132,59 @@ export const SERVICES: Service[] = [
 
 export const PROJECTS: Project[] = [
   {
-    title: "Shell Site I-8 Markaz Islamabad",
-    location: "Bahria Enclave",
+    title: "Residential",
+    location: "Homes and villas",
     image: "/newProjects/newProject1.jpeg",
-    alt: "Completed commercial mall with premium retail frontage",
+    images: [
+      "/newProjects/newProject1.jpeg",
+      "/newProjects/newProject4.jpeg",
+      "/newProjects/newProject7.jpeg",
+    ],
+    alt: "Completed residential home designed and built by Paradigm",
   },
   {
-    title: "Petrol Pump Site Islamabad",
-    location: "Islamabad",
+    title: "Commercial",
+    location: "Retail and office spaces",
     image: "/newProjects/newProject2.jpeg",
-    alt: "Finished mixed-use plaza at Shell I-8 Markaz",
+    images: [
+      "/newProjects/newProject2.jpeg",
+      "/newProjects/newProject5.jpeg",
+      "/newProjects/newProject6.jpeg",
+    ],
+    alt: "Completed commercial property delivered by Paradigm",
   },
   {
-    title: "Commercial Site",
-    location: "Islamabad",
+    title: "Industrial",
+    location: "Facilities and infrastructure",
     image: "/newProjects/newProject3.jpeg",
-    alt: "Completed luxury villa development in Islamabad",
+    images: [
+      "/newProjects/newProject3.jpeg",
+      "/newProjects/newProject8.jpeg",
+      "/newProjects/newProject11.jpeg",
+    ],
+    alt: "Completed industrial facility delivered by Paradigm",
   },
   {
-    title: "Private Residence",
-    location: "Bahria Town",
-    image: "/newProjects/newProject4.jpeg",
-    alt: "Finished contemporary residence with landscaped grounds",
+    title: "Architectural",
+    location: "Design and development",
+    image: "/newProjects/newProject9.jpeg",
+    images: [
+      "/newProjects/newProject9.jpeg",
+      "/newProjects/newProject10.jpeg",
+      "/newProjects/newProject12.jpeg",
+    ],
+    alt: "Contemporary architectural project designed by Paradigm",
   },
   {
-    title: "Hongkong Plaza",
-    location: "Raja Bazar, Rawalpindi",
-    image: "/newProjects/newProject5.jpeg",
-    alt: "Completed retail and office plaza in Rawalpindi",
-  },
-  {
-    title: "The Heights",
-    location: "Islamabad",
-    image: "/newProjects/newProject6.jpeg",
-    alt: "Finished high-rise residential tower in Islamabad",
-  },
-  {
-    title: "Private Residence",
-    location: "Bahria Enclave",
-    image: "/newProjects/newProject7.jpeg",
-    alt: "Completed modern family home in Bahria Enclave",
-  },
-  {
-    title: "Oil Storage Facility",
-    location: "Punjab",
-    image: "/newProjects/newProject8.jpeg",
-    alt: "Finished industrial storage facility and infrastructure",
+    title: "Fabrication",
+    location: "Custom metalwork",
+    image: "/newProjects/newProject13.jpeg",
+    images: [
+      "/newProjects/newProject13.jpeg",
+      "/newProjects/newProject14.jpeg",
+      "/images/mechanical.jpg",
+    ],
+    alt: "Precision fabrication work completed by Paradigm",
   },
 ];
 
