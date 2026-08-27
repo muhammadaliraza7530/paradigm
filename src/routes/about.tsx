@@ -65,7 +65,7 @@ function About() {
           <Reveal className="reveal-left">
             <LitPanel className="img-watermark overflow-hidden">
               <img
-                src="/images/civil.jpg"
+                src="/images/desing.jpg"
                 alt="Paradigm engineers on a construction site"
                 loading="lazy"
                 decoding="async"

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { ArrowRight, CheckCircle2, CalendarClock, Handshake } from "lucide-react";
 import { LitPanel } from "@/components/site/LitPanel";
 import { CountUp } from "@/components/site/CountUp";
@@ -8,6 +9,13 @@ import { ShowcaseMarquee } from "@/components/site/ShowcaseMarquee";
 import { TestimonialsMarquee } from "@/components/site/TestimonialsMarquee";
 import { Marquee } from "@/components/site/Marquee";
 import { Wordmark } from "@/components/site/Wordmark";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 
 import { Reveal } from "@/components/site/Reveal";
@@ -36,6 +44,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const [selectedProject, setSelectedProject] = useState<(typeof PROJECTS)[number] | null>(null);
+
   return (
     <>
       {/* Hero */}
@@ -277,26 +287,63 @@ function Home() {
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
             {PROJECTS.slice(0, 5).map((p, i) => (
               <Reveal key={`${p.title}-${i}`} className="reveal-step" delay={i * 150}>
-                <LitPanel className="img-watermark group relative overflow-hidden">
-                  <img
-                    src={p.image}
-                    alt={p.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="aspect-[3/4] w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/70 to-transparent p-6 pt-16">
-                    <h3 className="text-base">{p.title}</h3>
-                    <p className="mt-1 text-xs uppercase tracking-[0.2em] text-primary">
-                      {p.location}
-                    </p>
-                  </div>
-                </LitPanel>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProject(p)}
+                  className="group block w-full p-0 text-left"
+                  aria-label={`Open ${p.title} project gallery`}
+                >
+                  <LitPanel className="img-watermark relative overflow-hidden">
+                    <img
+                      src={p.image}
+                      alt={p.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="aspect-[3/4] w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/70 to-transparent p-6 pt-16">
+                      <h3 className="text-base">{p.title}</h3>
+                      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-primary">
+                        {p.location}
+                      </p>
+                    </div>
+                  </LitPanel>
+                </button>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
+
+      <Dialog
+        open={selectedProject !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedProject(null);
+        }}
+      >
+        <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto bg-background/95">
+          {selectedProject && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedProject.title} gallery</DialogTitle>
+                <DialogDescription>{selectedProject.location}</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {selectedProject.images.map((image, index) => (
+                  <img
+                    key={image}
+                    src={image}
+                    alt={`${selectedProject.title} project view ${index + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="aspect-[4/3] w-full rounded-xl object-cover"
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Testimonials */}
       <section className="border-t border-border bg-card/30 py-20 lg:py-28">
