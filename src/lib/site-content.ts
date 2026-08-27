@@ -193,6 +193,42 @@ export const TESTIMONIALS = [
     quote:
       "I recently hired this construction company for a home renovation project. The team was professional, skilled, and completed the work within the expected timeframe.",
   },
+  {
+    name: "Ayesha Khan",
+    role: "Homeowner, Islamabad",
+    quote:
+      "From the first design meeting to the final handover, the Paradigm team kept every detail organized. Our home feels thoughtful, solid, and completely ours.",
+  },
+  {
+    name: "Hamza Rauf",
+    role: "Director, Rauf Trading",
+    quote:
+      "The team delivered our commercial space with impressive attention to quality and timelines. Their engineers were responsive and practical throughout the build.",
+  },
+  {
+    name: "Sana Ahmed",
+    role: "Project Lead, Islamabad",
+    quote:
+      "Paradigm turned a complicated renovation into a smooth experience. They listened carefully, communicated clearly, and delivered a finish we are proud to show clients.",
+  },
+  {
+    name: "Usman Farooq",
+    role: "Factory Owner, Rawalpindi",
+    quote:
+      "Their industrial construction knowledge made a real difference on our facility. The work was disciplined, safe, and completed without compromising the schedule.",
+  },
+  {
+    name: "Nadia Malik",
+    role: "House Owner, Bahria Enclave",
+    quote:
+      "We always knew what was happening next and why. The finished house reflects our ideas beautifully, with craftsmanship that shows in every room.",
+  },
+  {
+    name: "Bilal Shah",
+    role: "Operations Manager, Islamabad",
+    quote:
+      "The Paradigm crew handled our office expansion with great professionalism. The quality of the work and the clarity of communication stood out from day one.",
+  },
 ];
 
 export const FAQS = [
