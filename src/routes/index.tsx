@@ -149,14 +149,14 @@ function Home() {
         </div>
       </section>
 
-      {/* Recent builds — draggable auto-scrolling showcase */}
+      {/* Featured projects — draggable auto-scrolling showcase */}
       <section className="relative border-t border-border bg-card/20 py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <SectionHeading
-              eyebrow="Recent builds"
-              title="Homes we've delivered"
-              intro="Drag to explore, or let it glide. Modern residences designed and constructed by our team across Islamabad and Lahore."
+              eyebrow="Featured projects"
+              title="Projects We've Delivered"
+              intro="Drag to explore, or let it glide. Premier commercial, residential, industrial, and infrastructure developments designed and constructed by our team across Islamabad and Lahore."
             />
             <Reveal>
               <Link
@@ -204,6 +204,14 @@ function Home() {
                   <div className="p-7">
                     <h3 className="text-lg">{s.title}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.short}</p>
+                    <ul className="mt-4 grid gap-2 text-xs text-muted-foreground">
+                      {s.bullets.slice(0, 3).map((bullet) => (
+                        <li key={bullet} className="flex items-start gap-2">
+                          <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                          {bullet}
+                        </li>
+                      ))}
+                    </ul>
                     <Link
                       to="/services"
                       hash={s.slug}
@@ -266,8 +274,8 @@ function Home() {
             </Reveal>
           </div>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {PROJECTS.slice(0, 4).map((p, i) => (
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {PROJECTS.slice(0, 5).map((p, i) => (
               <Reveal key={`${p.title}-${i}`} className="reveal-step" delay={i * 150}>
                 <LitPanel className="img-watermark group relative overflow-hidden">
                   <img

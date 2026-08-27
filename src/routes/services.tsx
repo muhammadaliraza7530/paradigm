@@ -60,11 +60,29 @@ function Services() {
                   0{i + 1}
                 </p>
                 <h2 className="mt-4 text-3xl lg:text-4xl">{s.title}</h2>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {s.subCategories.map((category) => (
+                    <span
+                      key={category}
+                      className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-primary"
+                    >
+                      {category}
+                    </span>
+                  ))}
+                </div>
                 {s.body.map((p) => (
                   <p key={p} className="mt-4 text-sm leading-relaxed text-muted-foreground">
                     {p}
                   </p>
                 ))}
+                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {s.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2 text-sm text-foreground">
+                      <ArrowRight className="mt-0.5 size-4 shrink-0 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
                 <Link
                   to="/contact"
                   className="btn-shake mt-8 inline-flex items-center gap-2 border border-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground"

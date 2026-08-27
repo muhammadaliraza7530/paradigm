@@ -57,14 +57,14 @@ function Projects() {
         </div>
       </section>
 
-      {/* Residences gallery */}
+      {/* Featured projects gallery */}
       <section className="border-t border-border bg-card/20 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <p className="text-center text-[0.65rem] font-bold uppercase tracking-[0.3em] text-primary sm:text-xs">
-            Residences we've built
+            Our featured projects
           </p>
           <h2 className="mt-4 text-balance text-center text-2xl font-extrabold uppercase sm:text-3xl lg:text-4xl">
-            Homes delivered across Pakistan
+            Excellence delivered across Pakistan
           </h2>
         </div>
         <div className="mt-12">

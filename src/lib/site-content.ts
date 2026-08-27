@@ -31,12 +31,16 @@ export type Service = {
   image: string;
   short: string;
   body: string[];
+  subCategories: string[];
+  bullets: string[];
+  features: string[];
 };
 
 export type Project = {
   title: string;
   location: string;
   image: string;
+  images: string[];
   alt: string;
 };
 
@@ -51,6 +55,19 @@ export const SERVICES: Service[] = [
       "At Paradigm, we understand the importance of creating spaces that not only meet your needs but exceed your expectations. That's why we offer a comprehensive range of civil construction services for both residential and commercial projects.",
       "From small remodels to large-scale developments, our team of experts can handle it all. With a focus on quality, we will guide you through every step of the process, from land purchase advice to custom design and construction.",
     ],
+    subCategories: ["Commercial", "Residential", "Industrial", "Infrastructure"],
+    bullets: [
+      "Site preparation and foundations",
+      "Structural construction",
+      "Roads and infrastructure",
+      "Renovation and extensions",
+    ],
+    features: [
+      "Complete project planning and estimation",
+      "Concrete, masonry and structural works",
+      "Quality-controlled materials and workmanship",
+      "On-site supervision from start to handover",
+    ],
   },
   {
     slug: "architectural-development",
@@ -61,6 +78,19 @@ export const SERVICES: Service[] = [
     body: [
       "We place the utmost importance on paying attention to detail and delivering personalized services to our clients. We believe that each project should be a one-of-a-kind creation that reflects our clients' vision and preferences.",
       "Our commitment to design excellence, integrity, and personalized service has made us a standout in the architectural field and building industry — with deep experience in home design, commercial design, institutional design and renovations.",
+    ],
+    subCategories: ["Exterior design", "Interior design", "MEP drafting", "3D modeling"],
+    bullets: [
+      "Concept and detail design",
+      "Space planning and material selection",
+      "Construction drawings",
+      "3D visualization",
+    ],
+    features: [
+      "Client-led design development",
+      "Detailed architectural and MEP documentation",
+      "Photorealistic 3D models and walkthroughs",
+      "Design coordination through construction",
     ],
   },
   {
@@ -73,6 +103,19 @@ export const SERVICES: Service[] = [
       "We are leaders in industrial construction and specialize in using cutting-edge technology to design and build facilities that meet our clients' needs. Our experts assist manufacturers in streamlining production and reimagining logistics through the design and construction of warehouses, production and manufacturing units, industrial plants, factories, surgical units and textile units.",
       "Our focus is on providing entire industrial new construction, refurbishment and expansion services that are completed on budget and on time, ensuring that our clients' day-to-day activities run smoothly and efficiently.",
     ],
+    subCategories: ["Petrol pumps", "Storage tanks", "Factories", "Warehouses"],
+    bullets: [
+      "Industrial units and production floors",
+      "Fuel stations and forecourts",
+      "Storage and logistics facilities",
+      "Plant refurbishment and expansion",
+    ],
+    features: [
+      "Process-aware structural planning",
+      "Heavy-duty foundations and steel structures",
+      "Utilities and site infrastructure coordination",
+      "Safety-focused construction management",
+    ],
   },
   {
     slug: "hvac-system",
@@ -83,6 +126,19 @@ export const SERVICES: Service[] = [
     body: [
       "A trusted name in HVAC services in Islamabad, Paradigm has over 10 years of experience in the industry, dedicated to providing top-notch heating, ventilation and air conditioning solutions to our clients.",
       "Our focus on quality, efficiency and affordability has made us a go-to choice for residential and commercial HVAC services throughout Pakistan.",
+    ],
+    subCategories: ["Heating", "Cooling", "Ventilation", "Air quality"],
+    bullets: [
+      "Central and split air conditioning",
+      "Ducting and ventilation",
+      "Chillers and package units",
+      "Preventive maintenance",
+    ],
+    features: [
+      "Load calculations and system selection",
+      "Energy-efficient HVAC design",
+      "Installation, testing and commissioning",
+      "Planned maintenance and troubleshooting",
     ],
   },
   {
@@ -95,6 +151,19 @@ export const SERVICES: Service[] = [
       "Paradigm offers a wealth of experience in delivering top-notch mechanical, electrical and plumbing solutions. With a proven track record of successful projects and a vast portfolio, the company offers cost-efficient MEP services designed to meet the specific needs of your home or business.",
       "Whether you're looking to upgrade your existing systems or install new ones, Paradigm has the knowledge and expertise to ensure your property is equipped with the latest technologies — all while working within your budget constraints.",
     ],
+    subCategories: ["Mechanical", "Electrical", "Plumbing", "Firefighting"],
+    bullets: [
+      "Water supply and drainage",
+      "Power distribution and lighting",
+      "Firefighting systems",
+      "Equipment installation",
+    ],
+    features: [
+      "Coordinated MEP shop drawings",
+      "Electrical panels and low-voltage systems",
+      "Piping networks and sanitary systems",
+      "Testing, balancing and commissioning",
+    ],
   },
   {
     slug: "mechanical-work",
@@ -106,6 +175,19 @@ export const SERVICES: Service[] = [
       "Our Mechanical Services team offers top-notch consultation, design and building solutions for commercial, industrial and institutional facilities. Our goal is to enhance the efficiency and health of your facility.",
       "With a focus on MEP designs and firefighting services, Paradigm delivers complete and reliable mechanical solutions to meet the unique needs of your project.",
     ],
+    subCategories: ["Facades", "Curtain walls", "Railings", "Stairs"],
+    bullets: [
+      "Architectural metal facades",
+      "Curtain wall systems",
+      "Stainless steel railings",
+      "Steel stairs and platforms",
+    ],
+    features: [
+      "Shop drawings and material take-offs",
+      "CNC and workshop fabrication",
+      "Welding, finishing and protective coatings",
+      "Site installation and final fit-out",
+    ],
   },
   {
     slug: "solar-systems",
@@ -114,6 +196,19 @@ export const SERVICES: Service[] = [
     short: "Say goodbye to expensive energy bills and welcome a more sustainable future.",
     body: [
       "Say goodbye to expensive energy bills and welcome a more sustainable future with Paradigm's solar system services. Our team specializes in the installation and maintenance of solar systems, providing a cost-effective and environmentally friendly solution for powering your project.",
+    ],
+    subCategories: ["Residential systems", "Commercial systems", "Hybrid systems", "Backup power"],
+    bullets: [
+      "5kW to 25kW+ installations",
+      "On-grid and hybrid solutions",
+      "Solar panels and inverters",
+      "Monitoring and maintenance",
+    ],
+    features: [
+      "Site survey and energy assessment",
+      "System sizing for current and future demand",
+      "Professional installation and protection",
+      "Performance monitoring and aftercare",
     ],
   },
   {
@@ -126,57 +221,77 @@ export const SERVICES: Service[] = [
       "These services include the development, maintenance and management of critical infrastructure such as roads, bridges, airports and water supply systems.",
       "We ensure that projects are completed on time, within budget, and to the satisfaction of all stakeholders — meeting every safety and regulatory standard along the way.",
     ],
+    subCategories: ["Roads", "Bridges", "Airports", "Water supply"],
+    bullets: [
+      "Earthworks and site grading",
+      "Road and drainage networks",
+      "Utility infrastructure",
+      "Maintenance and rehabilitation",
+    ],
+    features: [
+      "Surveying and construction planning",
+      "Durable civil works and materials",
+      "Stakeholder and utility coordination",
+      "Safety and regulatory compliance",
+    ],
   },
 ];
 
 export const PROJECTS: Project[] = [
   {
-    title: "Shell Site I-8 Markaz Islamabad",
-    location: "Bahria Enclave",
+    title: "Residential",
+    location: "Homes and villas",
     image: "/newProjects/newProject1.jpeg",
-    alt: "Completed commercial mall with premium retail frontage",
+    images: [
+      "/newProjects/newProject1.jpeg",
+      "/newProjects/newProject4.jpeg",
+      "/newProjects/newProject7.jpeg",
+    ],
+    alt: "Completed residential home designed and built by Paradigm",
   },
   {
-    title: "Petrol Pump Site Islamabad",
-    location: "Islamabad",
+    title: "Commercial",
+    location: "Retail and office spaces",
     image: "/newProjects/newProject2.jpeg",
-    alt: "Finished mixed-use plaza at Shell I-8 Markaz",
+    images: [
+      "/newProjects/newProject2.jpeg",
+      "/newProjects/newProject5.jpeg",
+      "/newProjects/newProject6.jpeg",
+    ],
+    alt: "Completed commercial property delivered by Paradigm",
   },
   {
-    title: "Commercial Site",
-    location: "Islamabad",
+    title: "Industrial",
+    location: "Facilities and infrastructure",
     image: "/newProjects/newProject3.jpeg",
-    alt: "Completed luxury villa development in Islamabad",
+    images: [
+      "/newProjects/newProject3.jpeg",
+      "/newProjects/newProject8.jpeg",
+      "/newProjects/newProject11.jpeg",
+    ],
+    alt: "Completed industrial facility delivered by Paradigm",
   },
   {
-    title: "Private Residence",
-    location: "Bahria Town",
-    image: "/newProjects/newProject4.jpeg",
-    alt: "Finished contemporary residence with landscaped grounds",
+    title: "Architectural",
+    location: "Design and development",
+    image: "/newProjects/newProject9.jpeg",
+    images: [
+      "/newProjects/newProject9.jpeg",
+      "/newProjects/newProject10.jpeg",
+      "/newProjects/newProject12.jpeg",
+    ],
+    alt: "Contemporary architectural project designed by Paradigm",
   },
   {
-    title: "Hongkong Plaza",
-    location: "Raja Bazar, Rawalpindi",
-    image: "/newProjects/newProject5.jpeg",
-    alt: "Completed retail and office plaza in Rawalpindi",
-  },
-  {
-    title: "The Heights",
-    location: "Islamabad",
-    image: "/newProjects/newProject6.jpeg",
-    alt: "Finished high-rise residential tower in Islamabad",
-  },
-  {
-    title: "Private Residence",
-    location: "Bahria Enclave",
-    image: "/newProjects/newProject7.jpeg",
-    alt: "Completed modern family home in Bahria Enclave",
-  },
-  {
-    title: "Oil Storage Facility",
-    location: "Punjab",
-    image: "/newProjects/newProject8.jpeg",
-    alt: "Finished industrial storage facility and infrastructure",
+    title: "Fabrication",
+    location: "Custom metalwork",
+    image: "/newProjects/newProject13.jpeg",
+    images: [
+      "/newProjects/newProject13.jpeg",
+      "/newProjects/newProject14.jpeg",
+      "/images/mechanical.jpg",
+    ],
+    alt: "Precision fabrication work completed by Paradigm",
   },
 ];
 
@@ -192,6 +307,42 @@ export const TESTIMONIALS = [
     role: "House Owner",
     quote:
       "I recently hired this construction company for a home renovation project. The team was professional, skilled, and completed the work within the expected timeframe.",
+  },
+  {
+    name: "Ayesha Khan",
+    role: "Homeowner, Islamabad",
+    quote:
+      "From the first design meeting to the final handover, the Paradigm team kept every detail organized. Our home feels thoughtful, solid, and completely ours.",
+  },
+  {
+    name: "Hamza Rauf",
+    role: "Director, Rauf Trading",
+    quote:
+      "The team delivered our commercial space with impressive attention to quality and timelines. Their engineers were responsive and practical throughout the build.",
+  },
+  {
+    name: "Sana Ahmed",
+    role: "Project Lead, Islamabad",
+    quote:
+      "Paradigm turned a complicated renovation into a smooth experience. They listened carefully, communicated clearly, and delivered a finish we are proud to show clients.",
+  },
+  {
+    name: "Usman Farooq",
+    role: "Factory Owner, Rawalpindi",
+    quote:
+      "Their industrial construction knowledge made a real difference on our facility. The work was disciplined, safe, and completed without compromising the schedule.",
+  },
+  {
+    name: "Nadia Malik",
+    role: "House Owner, Bahria Enclave",
+    quote:
+      "We always knew what was happening next and why. The finished house reflects our ideas beautifully, with craftsmanship that shows in every room.",
+  },
+  {
+    name: "Bilal Shah",
+    role: "Operations Manager, Islamabad",
+    quote:
+      "The Paradigm crew handled our office expansion with great professionalism. The quality of the work and the clarity of communication stood out from day one.",
   },
 ];
 

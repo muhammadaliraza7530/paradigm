@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X, Phone } from "lucide-react";
+import { Mail, Menu, Phone, X } from "lucide-react";
 import { NAV, SITE } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,6 @@ export function Navbar() {
           <img src={SITE.logo} alt={`${SITE.name} logo`} className="h-8 w-auto shrink-0 sm:h-10" />
         </Link>
 
-
         <nav className="hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
             <Link
@@ -52,6 +51,13 @@ export function Navbar() {
             <Phone className="size-4 text-primary" />
             {SITE.uan}
           </a>
+          <a
+            href={`mailto:${SITE.email}`}
+            className="flex shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-foreground"
+          >
+            <Mail className="size-4 text-primary" />
+            {SITE.email}
+          </a>
           <Link
             to="/contact"
             className="whitespace-nowrap rounded-full border border-primary bg-primary px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
@@ -68,7 +74,6 @@ export function Navbar() {
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
-
       </div>
 
       {open && (
@@ -92,7 +97,12 @@ export function Navbar() {
             >
               <Phone className="size-4" /> {SITE.uan}
             </a>
-
+            <a
+              href={`mailto:${SITE.email}`}
+              className="mt-2 flex items-center justify-center gap-2 rounded-full border border-primary bg-primary px-5 py-3 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground"
+            >
+              <Mail className="size-4" /> {SITE.email}
+            </a>
           </nav>
         </div>
       )}
