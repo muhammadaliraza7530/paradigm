@@ -95,6 +95,8 @@ function Projects() {
                   poster={PROJECTS[index % PROJECTS.length].image}
                   controls
                   unmuted
+                  loop={false}
+                  autoPlay={false}
                   className="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="border-t border-border px-5 py-4">
