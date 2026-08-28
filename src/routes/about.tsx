@@ -81,7 +81,8 @@ function About() {
             />
             <Reveal className="reveal-right" delay={120}>
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-                Paradigm is registered with FBR, SECP and other government bodies. Our
+                Paradigm is registered with SECP, FBR, PEC (Pakistan Engineering Council), FWO, MES,
+                PRA (Punjab Revenue Authority) and other government bodies. Our
                 professionals have years of experience in the construction industry and are
                 trained in the latest technology and techniques, so every project — from a small
                 remodel to a full industrial plant — is delivered to the same standard.
