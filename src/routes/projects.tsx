@@ -14,7 +14,7 @@ const DESC =
 const PROJECT_VIDEOS = Array.from(
   { length: 8 },
   (_, index) => `/project-videos/project-vidoe-${index + 1}.mp4`,
-);
+).concat("/project-videos/project-vidoe-9.MOV");
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
