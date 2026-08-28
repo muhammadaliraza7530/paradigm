@@ -1,11 +1,6 @@
 import { useEffect, useRef } from "react";
 
-/**
- * Autoplays muted (mobile-safe) and switches sound ON automatically whenever the
- * video scrolls into view — no controls. Leaving the section mutes + pauses it.
- * Browsers require a user gesture before audio can start, so the first tap/scroll
- * anywhere on the page primes it; after that it is fully automatic.
- */
+/** Keeps project walkthrough videos silent while preserving default audio elsewhere. */
 export function ShowcaseVideo({
   className,
   src = "/showcase.mp4",
@@ -78,6 +73,15 @@ export function ShowcaseVideo({
       controls={controls}
       controlsList="nodownload"
       onPlay={() => {
+        if (isProjectVideo) {
+          const video = ref.current;
+          if (video) {
+            video.muted = true;
+            video.volume = 0;
+          }
+        }
+      }}
+      onVolumeChange={() => {
         if (isProjectVideo) {
           const video = ref.current;
           if (video) {
