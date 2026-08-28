@@ -10,10 +10,18 @@ export function ShowcaseVideo({
   className,
   src = "/showcase.mp4",
   poster = "/showcase-poster.jpg",
+  controls = false,
+  unmuted = false,
+  loop = true,
+  autoPlay = true,
 }: {
   className?: string;
   src?: string;
   poster?: string;
+  controls?: boolean;
+  unmuted?: boolean;
+  loop?: boolean;
+  autoPlay?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -38,17 +46,25 @@ export function ShowcaseVideo({
     const io = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
-        if (inView) {
-          void el.play().catch(() => {});
-          enableSound();
+        if (inView && autoPlay) {
+          if (unmuted) {
+            void el.play().catch(() => {});
+          } else {
+            void el.play().catch(() => {});
+            enableSound();
+          }
         } else {
-          el.muted = true;
+          if (!unmuted) el.muted = true;
           el.pause();
         }
       },
       { threshold: 0.35 },
     );
     io.observe(el);
+
+    if (controls) {
+      return () => io.disconnect();
+    }
 
     // Any interaction anywhere grants audio permission — retry immediately.
     const gestures = ["pointerdown", "pointermove", "touchstart", "keydown", "wheel", "scroll"];
@@ -65,7 +81,7 @@ export function ShowcaseVideo({
       window.clearInterval(retry);
       gestures.forEach((g) => window.removeEventListener(g, enableSound, opts));
     };
-  }, []);
+  }, [autoPlay, controls, unmuted]);
 
   return (
     <video
@@ -73,12 +89,22 @@ export function ShowcaseVideo({
       src={src}
       poster={poster}
       className={className}
-      autoPlay
-      muted
-      loop
+      autoPlay={autoPlay}
+      muted={!unmuted}
+      loop={loop}
       playsInline
       preload="metadata"
+      controls={controls}
       controlsList="nodownload"
+      onPlay={() => {
+        if (unmuted) {
+          const video = ref.current;
+          if (video) {
+            video.muted = false;
+            video.volume = 1;
+          }
+        }
+      }}
     />
   );
 }
