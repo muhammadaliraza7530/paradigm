@@ -24,37 +24,30 @@ export function ShowcaseVideo({
   autoPlay?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const isProjectVideo =
+    src.includes("/project-videos/") || src.includes("/public/project-videos/");
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    let inView = false;
-    let retry = 0;
+    if (isProjectVideo) {
+      el.muted = true;
+      el.volume = 0;
+    }
 
-    const enableSound = () => {
-      if (!inView) return;
-      el.muted = false;
-      el.volume = 1;
-      void el.play().catch(() => {
-        // Audio blocked (no user activation yet) — keep playing silently and retry.
-        el.muted = true;
-        void el.play().catch(() => {});
-      });
-    };
+    let inView = false;
 
     const io = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
         if (inView && autoPlay) {
-          if (unmuted) {
-            void el.play().catch(() => {});
-          } else {
-            void el.play().catch(() => {});
-            enableSound();
-          }
+          void el.play().catch(() => {});
         } else {
-          if (!unmuted) el.muted = true;
+          if (isProjectVideo) {
+            el.muted = true;
+            el.volume = 0;
+          }
           el.pause();
         }
       },
@@ -66,22 +59,10 @@ export function ShowcaseVideo({
       return () => io.disconnect();
     }
 
-    // Any interaction anywhere grants audio permission — retry immediately.
-    const gestures = ["pointerdown", "pointermove", "touchstart", "keydown", "wheel", "scroll"];
-    const opts: AddEventListenerOptions = { passive: true, capture: true };
-    gestures.forEach((g) => window.addEventListener(g, enableSound, opts));
-
-    // Safety net: while in view but still muted, keep trying.
-    retry = window.setInterval(() => {
-      if (inView && el.muted) enableSound();
-    }, 800);
-
     return () => {
       io.disconnect();
-      window.clearInterval(retry);
-      gestures.forEach((g) => window.removeEventListener(g, enableSound, opts));
     };
-  }, [autoPlay, controls, unmuted]);
+  }, [autoPlay, controls, isProjectVideo]);
 
   return (
     <video
@@ -90,18 +71,18 @@ export function ShowcaseVideo({
       poster={poster}
       className={className}
       autoPlay={autoPlay}
-      muted={!unmuted}
+      muted={isProjectVideo}
       loop={loop}
       playsInline
       preload="metadata"
       controls={controls}
       controlsList="nodownload"
       onPlay={() => {
-        if (unmuted) {
+        if (isProjectVideo) {
           const video = ref.current;
           if (video) {
-            video.muted = false;
-            video.volume = 1;
+            video.muted = true;
+            video.volume = 0;
           }
         }
       }}
