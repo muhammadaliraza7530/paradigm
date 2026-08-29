@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { CallFloat } from "@/components/site/CallFloat";
+import { CalculatorFab } from "@/components/site/CalculatorFab";
 import { useScrollChoreography } from "@/hooks/use-scroll-choreography";
 
 
@@ -135,6 +136,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <Footer />
+        <CalculatorFab />
         <CallFloat />
       </div>
     </QueryClientProvider>
