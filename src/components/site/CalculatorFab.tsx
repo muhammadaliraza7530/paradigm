@@ -3,39 +3,72 @@ import { Calculator, MessageCircle, X } from "lucide-react";
 import { SITE, waLink } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
 
-const RATES = {
-  grey: 2700,
-  finishing: 3200,
-  commercial: 3500,
-} as const;
+type Category = "residential" | "commercial";
 
-type BuildType = keyof typeof RATES;
+type ResidentialPlot = {
+  label: string;
+  min: number;
+  max: number;
+  grey: number;
+  finishing: number;
+  mep: number;
+  furnishing: number;
+};
 
-const BUILD_TYPES: { id: BuildType; label: string }[] = [
+type CommercialPlot = {
+  label: string;
+  area: number;
+  grey: number;
+  finishing: number;
+};
+
+const RESIDENTIAL: ResidentialPlot[] = [
+  { label: "3 Marla", min: 575, max: 735, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
+  { label: "5 Marla", min: 900, max: 1150, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
+  { label: "7 Marla", min: 1180, max: 1520, grey: 5500, finishing: 7000, mep: 4800, furnishing: 4000 },
+  { label: "10 Marla", min: 1575, max: 2040, grey: 5800, finishing: 7300, mep: 4800, furnishing: 4000 },
+  { label: "1 Kanal", min: 2925, max: 3800, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
+  { label: "2 Kanal", min: 4950, max: 6500, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
+];
+
+const COMMERCIAL: CommercialPlot[] = [
+  { label: "3.5 Marla", area: 1430, grey: 2800, finishing: 3500 },
+  { label: "5 Marla", area: 1900, grey: 2800, finishing: 3500 },
+  { label: "7 Marla", area: 2450, grey: 2850, finishing: 3500 },
+  { label: "10 Marla", area: 2900, grey: 2900, finishing: 3800 },
+  { label: "12 Marla", area: 3500, grey: 2800, finishing: 3700 },
+  { label: "1 Kanal", area: 5000, grey: 2750, finishing: 3300 },
+  { label: "2 Kanal", area: 7800, grey: 2750, finishing: 3300 },
+];
+
+const RES_SCOPES = [
   { id: "grey", label: "Grey Structure" },
   { id: "finishing", label: "Finishing" },
-  { id: "commercial", label: "Commercial" },
-];
+  { id: "mep", label: "MEP / HVAC" },
+  { id: "furnishing", label: "Furnishing" },
+] as const;
 
-const PLOT_SIZES = [
-  { label: "3 Marla", area: 675 },
-  { label: "5 Marla", area: 1125 },
-  { label: "7 Marla", area: 1575 },
-  { label: "10 Marla", area: 2250 },
-  { label: "1 Kanal", area: 4500 },
-  { label: "2 Kanal", area: 9000 },
-];
+const COM_SCOPES = [
+  { id: "grey", label: "Grey Structure" },
+  { id: "finishing", label: "Finishing" },
+] as const;
 
-const COVERAGE = 0.78;
+type ResScope = (typeof RES_SCOPES)[number]["id"];
+type ComScope = (typeof COM_SCOPES)[number]["id"];
 
 const pkr = (n: number) =>
   "PKR " + Math.round(n).toLocaleString("en-PK", { maximumFractionDigits: 0 });
 
 export function CalculatorFab() {
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState<BuildType>("grey");
-  const [plotIdx, setPlotIdx] = useState(3);
-  const [floors, setFloors] = useState(1);
+  const [category, setCategory] = useState<Category>("residential");
+  const [resIdx, setResIdx] = useState(3);
+  const [comIdx, setComIdx] = useState(2);
+  const [resArea, setResArea] = useState(RESIDENTIAL[3].min);
+  const [comArea, setComArea] = useState(COMMERCIAL[2].area);
+  const [floors, setFloors] = useState(2);
+  const [resScopes, setResScopes] = useState<ResScope[]>(["grey", "finishing"]);
+  const [comScopes, setComScopes] = useState<ComScope[]>(["grey", "finishing"]);
 
   useEffect(() => {
     if (!open) return;
@@ -44,16 +77,70 @@ export function CalculatorFab() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const plot = PLOT_SIZES[plotIdx];
-  const area = useMemo(
-    () => Math.round(plot.area * COVERAGE * floors),
-    [plot.area, floors],
-  );
-  const rate = RATES[type];
-  const total = area * rate;
-  const selected = BUILD_TYPES.find((t) => t.id === type)!;
+  const resPlot = RESIDENTIAL[resIdx];
+  const comPlot = COMMERCIAL[comIdx];
 
-  const waText = `Assalam-o-Alaikum! I used the ${SITE.short} cost calculator.\n\nConstruction type: ${selected.label}\nPlot size: ${plot.label}\nFloors: ${floors === 1 ? "Ground only" : `Ground + ${floors - 1}`}\nCovered area: ${area.toLocaleString()} Sq.ft\nRate: PKR ${rate.toLocaleString()}/Sq.ft\nEstimated cost: ${pkr(total)}\n\nPlease share an exact quote.`;
+  const selectRes = (i: number) => {
+    setResIdx(i);
+    setResArea(RESIDENTIAL[i].min);
+  };
+  const selectCom = (i: number) => {
+    setComIdx(i);
+    setComArea(COMMERCIAL[i].area);
+  };
+
+  const toggle = <T,>(list: T[], v: T): T[] =>
+    list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
+
+  const { lines, total, totalArea } = useMemo(() => {
+    if (category === "residential") {
+      const area = Math.min(Math.max(resArea, resPlot.min), resPlot.max);
+      const items = RES_SCOPES.filter((s) => resScopes.includes(s.id)).map((s) => ({
+        label: s.label,
+        rate: resPlot[s.id],
+        area,
+        amount: area * resPlot[s.id],
+      }));
+      return {
+        lines: items,
+        total: items.reduce((a, b) => a + b.amount, 0),
+        totalArea: area,
+      };
+    }
+    const area = comArea * floors;
+    const items = COM_SCOPES.filter((s) => comScopes.includes(s.id)).map((s) => ({
+      label: s.label,
+      rate: comPlot[s.id],
+      area,
+      amount: area * comPlot[s.id],
+    }));
+    return {
+      lines: items,
+      total: items.reduce((a, b) => a + b.amount, 0),
+      totalArea: area,
+    };
+  }, [category, resArea, resPlot, resScopes, comArea, comPlot, comScopes, floors]);
+
+  const plotLabel = category === "residential" ? resPlot.label : comPlot.label;
+
+  const waText = `Assalam-o-Alaikum! I used the ${SITE.short} cost calculator.\n\nCategory: ${category === "residential" ? "Residential" : "Commercial"}\nPlot size: ${plotLabel}\n${
+    category === "residential"
+      ? `Covered area (Ground + First + Mamty): ${totalArea.toLocaleString()} Sq.ft`
+      : `Single floor covered area: ${comArea.toLocaleString()} Sq.ft\nFloors: ${floors}\nTotal covered area: ${totalArea.toLocaleString()} Sq.ft`
+  }\n\n${lines
+    .map((l) => `${l.label}: ${l.area.toLocaleString()} x ${l.rate} = ${pkr(l.amount)}`)
+    .join("\n")}\n\nGrand total: ${pkr(total)}\n\nPlease share an exact quote.`;
+
+  const chip = (active: boolean) =>
+    cn(
+      "rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors",
+      active
+        ? "border-primary bg-primary text-primary-foreground"
+        : "border-border bg-background/40 text-foreground hover:border-primary/50",
+    );
+
+  const labelCls =
+    "text-[0.65rem] font-bold uppercase tracking-[0.2em] text-muted-foreground";
 
   return (
     <>
@@ -102,82 +189,193 @@ export function CalculatorFab() {
 
             <div className="flex-1 space-y-5 overflow-y-auto p-5">
               <div>
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                  Service
-                </p>
+                <p className={labelCls}>Category</p>
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  {BUILD_TYPES.map((t) => (
+                  {(["residential", "commercial"] as Category[]).map((c) => (
                     <button
-                      key={t.id}
+                      key={c}
                       type="button"
-                      onClick={() => setType(t.id)}
-                      className={cn(
-                        "rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors",
-                        type === t.id
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-background/40 text-foreground hover:border-primary/50",
-                      )}
+                      onClick={() => setCategory(c)}
+                      className={chip(category === c)}
                     >
-                      {t.label}
+                      {c === "residential" ? "Residential" : "Commercial"}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                  Plot size
-                </p>
+                <p className={labelCls}>Plot size</p>
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  {PLOT_SIZES.map((p, i) => (
-                    <button
-                      key={p.label}
-                      type="button"
-                      onClick={() => setPlotIdx(i)}
-                      className={cn(
-                        "rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors",
-                        i === plotIdx
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-background/40 text-foreground hover:border-primary/50",
-                      )}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
+                  {category === "residential"
+                    ? RESIDENTIAL.map((p, i) => (
+                        <button
+                          key={p.label}
+                          type="button"
+                          onClick={() => selectRes(i)}
+                          className={chip(i === resIdx)}
+                        >
+                          {p.label}
+                        </button>
+                      ))
+                    : COMMERCIAL.map((p, i) => (
+                        <button
+                          key={p.label}
+                          type="button"
+                          onClick={() => selectCom(i)}
+                          className={chip(i === comIdx)}
+                        >
+                          {p.label}
+                        </button>
+                      ))}
                 </div>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between">
-                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                    Floors
+              {category === "residential" ? (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <p className={labelCls}>Covered area</p>
+                    <span className="text-sm font-bold text-primary">
+                      {resArea.toLocaleString()} Sq.ft
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={resPlot.min}
+                    max={resPlot.max}
+                    step={5}
+                    value={resArea}
+                    onChange={(e) => setResArea(Number(e.target.value))}
+                    className="mt-3 w-full accent-primary"
+                    aria-label="Covered area in square feet"
+                  />
+                  <p className="mt-2 text-[0.7rem] leading-relaxed text-muted-foreground">
+                    Covered Area includes Ground, First Floor, and Mamty
+                    (typical range {resPlot.min.toLocaleString()}–
+                    {resPlot.max.toLocaleString()} Sq.ft).
                   </p>
-                  <span className="text-sm font-bold text-primary">
-                    {floors === 1 ? "Ground only" : `Ground + ${floors - 1}`}
-                  </span>
                 </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={4}
-                  value={floors}
-                  onChange={(e) => setFloors(Number(e.target.value))}
-                  className="mt-3 w-full accent-primary"
-                  aria-label="Number of floors"
-                />
+              ) : (
+                <>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <p className={labelCls}>Covered area / floor</p>
+                      <span className="text-sm font-bold text-primary">
+                        {comArea.toLocaleString()} Sq.ft
+                      </span>
+                    </div>
+                    <input
+                      type="number"
+                      min={100}
+                      value={comArea}
+                      onChange={(e) => setComArea(Math.max(0, Number(e.target.value)))}
+                      className="mt-3 w-full rounded-lg border border-border bg-background/40 px-3 py-2.5 text-sm font-semibold text-foreground"
+                      aria-label="Single floor covered area in square feet"
+                    />
+                    <p className="mt-2 text-[0.7rem] leading-relaxed text-muted-foreground">
+                      Rate applies per single floor — total covered area = single
+                      floor area × number of floors.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <p className={labelCls}>Number of floors *</p>
+                      <span className="text-sm font-bold text-primary">
+                        {floors}
+                      </span>
+                    </div>
+                    <input
+                      type="number"
+                      min={1}
+                      max={20}
+                      required
+                      value={floors}
+                      onChange={(e) =>
+                        setFloors(Math.min(20, Math.max(1, Number(e.target.value) || 1)))
+                      }
+                      className="mt-3 w-full rounded-lg border border-border bg-background/40 px-3 py-2.5 text-sm font-semibold text-foreground"
+                      aria-label="Number of floors"
+                    />
+                  </div>
+                </>
+              )}
+
+              <div>
+                <p className={labelCls}>Scope of work</p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {category === "residential"
+                    ? RES_SCOPES.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setResScopes((p) => toggle(p, s.id))}
+                          className={chip(resScopes.includes(s.id))}
+                        >
+                          {s.label}
+                        </button>
+                      ))
+                    : COM_SCOPES.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setComScopes((p) => toggle(p, s.id))}
+                          className={chip(comScopes.includes(s.id))}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                </div>
               </div>
 
-              <div className="rounded-xl border border-primary/40 bg-primary/10 p-5 text-center">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary">
-                  Estimated cost · {plot.label} {selected.label}
+              <div className="rounded-xl border border-primary/40 bg-primary/10 p-5">
+                <p className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary">
+                  {plotLabel} ·{" "}
+                  {category === "residential" ? "Residential" : "Commercial"}
                 </p>
-                <p className="mt-2 font-display text-3xl font-extrabold text-foreground">
-                  {pkr(total)}
+                <p className="mt-1 text-center text-[0.7rem] text-muted-foreground">
+                  Total covered area {totalArea.toLocaleString()} Sq.ft
+                  {category === "commercial"
+                    ? ` (${comArea.toLocaleString()} × ${floors} floors)`
+                    : ""}
                 </p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {area.toLocaleString()} Sq.ft @ PKR {rate.toLocaleString()}
-                  /Sq.ft · exact quote after free site visit.
-                </p>
+
+                <div className="mt-4 space-y-2">
+                  {lines.length === 0 ? (
+                    <p className="text-center text-xs text-muted-foreground">
+                      Select at least one scope of work.
+                    </p>
+                  ) : (
+                    lines.map((l) => (
+                      <div
+                        key={l.label}
+                        className="flex items-baseline justify-between gap-3 text-xs"
+                      >
+                        <span className="text-muted-foreground">
+                          {l.label}
+                          <span className="ml-1 opacity-70">
+                            @ {l.rate.toLocaleString()}/Sq.ft
+                          </span>
+                        </span>
+                        <span className="font-semibold text-foreground">
+                          {pkr(l.amount)}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <div className="mt-4 border-t border-primary/30 pt-3 text-center">
+                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary">
+                    Grand total
+                  </p>
+                  <p className="mt-1 font-display text-3xl font-extrabold text-foreground">
+                    {pkr(total)}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Exact quote after free site visit.
+                  </p>
+                </div>
               </div>
 
               <a
