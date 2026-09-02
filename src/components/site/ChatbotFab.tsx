@@ -7,7 +7,7 @@ type Msg = { role: "user" | "assistant"; content: string };
 
 const GREETING: Msg = {
   role: "assistant",
-  content: `Assalam-o-Alaikum! I'm the ${SITE.short} AI assistant. Ask me about our construction services, timelines, or rough costs.`,
+  content: `Assalam-o-Alaikum! I'm Paradigm Assistant, your construction cost and lead qualification helper for Paradigm Design & Construct in Islamabad. Ask about quotation ranges, services, or share your Name, Phone Number, and Plot Size.`,
 };
 
 export function ChatbotFab() {

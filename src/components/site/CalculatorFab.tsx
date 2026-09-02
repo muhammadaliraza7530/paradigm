@@ -1,63 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { Calculator, MessageCircle, X } from "lucide-react";
 import { SITE, waLink } from "@/lib/site-content";
+import {
+  COMMERCIAL,
+  COM_SCOPES,
+  RESIDENTIAL,
+  RES_SCOPES,
+  calculateCommercialEstimate,
+  calculateResidentialEstimate,
+  type CommercialScope,
+  type ResidentialScope,
+} from "@/lib/quotation-rates";
 import { cn } from "@/lib/utils";
 
 type Category = "residential" | "commercial";
-
-type ResidentialPlot = {
-  label: string;
-  area: number;
-  grey: number;
-  finishing: number;
-  mep: number;
-  furnishing: number;
-};
-
-type CommercialPlot = {
-  label: string;
-  area: number;
-  grey: number;
-  finishing: number;
-};
-
-// Residential: Covered Area already includes Ground + First Floor + Mumty
-const RESIDENTIAL: ResidentialPlot[] = [
-  { label: "3 Marla", area: 1430, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
-  { label: "5 Marla", area: 1900, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
-  { label: "7 Marla", area: 2450, grey: 5500, finishing: 7000, mep: 4800, furnishing: 4000 },
-  { label: "10 Marla", area: 2900, grey: 5800, finishing: 7300, mep: 4800, furnishing: 4000 },
-  { label: "12 Marla", area: 3500, grey: 5800, finishing: 7300, mep: 4800, furnishing: 4000 },
-  { label: "1 Kanal", area: 5000, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
-  { label: "2 Kanal", area: 7800, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
-];
-
-// Commercial: rate applies per single floor; total = area per floor x floors
-const COMMERCIAL: CommercialPlot[] = [
-  { label: "3.5 Marla", area: 1430, grey: 2800, finishing: 3500 },
-  { label: "5 Marla", area: 1900, grey: 2800, finishing: 3500 },
-  { label: "7 Marla", area: 2450, grey: 2850, finishing: 3500 },
-  { label: "10 Marla", area: 2900, grey: 2900, finishing: 3800 },
-  { label: "12 Marla", area: 3500, grey: 2800, finishing: 3700 },
-  { label: "1 Kanal", area: 5000, grey: 2750, finishing: 3300 },
-  { label: "2 Kanal", area: 7800, grey: 2750, finishing: 3300 },
-];
-
-
-const RES_SCOPES = [
-  { id: "grey", label: "Grey Structure" },
-  { id: "finishing", label: "Finishing" },
-  { id: "mep", label: "MEP / HVAC" },
-  { id: "furnishing", label: "Furnishing" },
-] as const;
-
-const COM_SCOPES = [
-  { id: "grey", label: "Grey Structure" },
-  { id: "finishing", label: "Finishing" },
-] as const;
-
-type ResScope = (typeof RES_SCOPES)[number]["id"];
-type ComScope = (typeof COM_SCOPES)[number]["id"];
 
 const pkr = (n: number) =>
   "PKR " + Math.round(n).toLocaleString("en-PK", { maximumFractionDigits: 0 });
@@ -66,12 +22,12 @@ export function CalculatorFab() {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<Category>("residential");
   const [resIdx, setResIdx] = useState(3);
-  const [comIdx, setComIdx] = useState(2);
-  const [resArea, setResArea] = useState(RESIDENTIAL[3].area);
-  const [comArea, setComArea] = useState(COMMERCIAL[2].area);
+  const [comIdx, setComIdx] = useState(3);
+  const [resArea, setResArea] = useState(0);
+  const [comArea, setComArea] = useState(COMMERCIAL[3].area);
   const [floors, setFloors] = useState(2);
-  const [resScopes, setResScopes] = useState<ResScope[]>(["grey", "finishing"]);
-  const [comScopes, setComScopes] = useState<ComScope[]>(["grey", "finishing"]);
+  const [resScopes, setResScopes] = useState<ResidentialScope[]>(["grey", "finishing"]);
+  const [comScopes, setComScopes] = useState<CommercialScope[]>(["grey", "finishing"]);
 
   useEffect(() => {
     if (!open) return;
@@ -85,7 +41,7 @@ export function CalculatorFab() {
 
   const selectRes = (i: number) => {
     setResIdx(i);
-    setResArea(RESIDENTIAL[i].area);
+    setResArea(0);
   };
   const selectCom = (i: number) => {
     setComIdx(i);
@@ -97,39 +53,17 @@ export function CalculatorFab() {
 
   const { lines, total, totalArea } = useMemo(() => {
     if (category === "residential") {
-      const area = Math.max(resArea, 0);
-      const items = RES_SCOPES.filter((s) => resScopes.includes(s.id)).map((s) => ({
-        label: s.label,
-        rate: resPlot[s.id],
-        area,
-        amount: area * resPlot[s.id],
-      }));
-      return {
-        lines: items,
-        total: items.reduce((a, b) => a + b.amount, 0),
-        totalArea: area,
-      };
+      return calculateResidentialEstimate(resPlot, resArea, resScopes);
     }
 
-    const area = comArea * floors;
-    const items = COM_SCOPES.filter((s) => comScopes.includes(s.id)).map((s) => ({
-      label: s.label,
-      rate: comPlot[s.id],
-      area,
-      amount: area * comPlot[s.id],
-    }));
-    return {
-      lines: items,
-      total: items.reduce((a, b) => a + b.amount, 0),
-      totalArea: area,
-    };
+    return calculateCommercialEstimate(comPlot, comArea, floors, comScopes);
   }, [category, resArea, resPlot, resScopes, comArea, comPlot, comScopes, floors]);
 
   const plotLabel = category === "residential" ? resPlot.label : comPlot.label;
 
   const waText = `Assalam-o-Alaikum! I used the ${SITE.short} cost calculator.\n\nCategory: ${category === "residential" ? "Residential" : "Commercial"}\nPlot size: ${plotLabel}\n${
     category === "residential"
-      ? `Covered area (Ground + First + Mamty): ${totalArea.toLocaleString()} Sq.ft`
+      ? `Covered area (Ground + First + Mumty): ${totalArea.toLocaleString()} Sq.ft`
       : `Single floor covered area: ${comArea.toLocaleString()} Sq.ft\nFloors: ${floors}\nTotal covered area: ${totalArea.toLocaleString()} Sq.ft`
   }\n\n${lines
     .map((l) => `${l.label}: ${l.area.toLocaleString()} x ${l.rate} = ${pkr(l.amount)}`)
@@ -143,8 +77,7 @@ export function CalculatorFab() {
         : "border-border bg-background/40 text-foreground hover:border-primary/50",
     );
 
-  const labelCls =
-    "text-[0.65rem] font-bold uppercase tracking-[0.2em] text-muted-foreground";
+  const labelCls = "text-[0.65rem] font-bold uppercase tracking-[0.2em] text-muted-foreground";
 
   return (
     <>
@@ -173,12 +106,10 @@ export function CalculatorFab() {
           >
             <div className="flex items-start justify-between gap-3 border-b border-border p-5">
               <div>
-                <p className="font-display text-base font-bold text-foreground">
-                  {SITE.name}
-                </p>
+                <p className="font-display text-base font-bold text-foreground">{SITE.name}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Instant construction estimate for your plot, then a free site
-                  visit &amp; exact fixed quote.
+                  Instant construction estimate for your plot, then a free site visit &amp; exact
+                  fixed quote.
                 </p>
               </div>
               <button
@@ -253,12 +184,13 @@ export function CalculatorFab() {
                     aria-label="Total covered area in square feet"
                   />
                   <p className="mt-2 text-[0.7rem] leading-relaxed text-muted-foreground">
-                    Standard {resPlot.label} covered area is{" "}
-                    {resPlot.area.toLocaleString()} Sq.ft (Ground + First Floor +
-                    Mumty). Adjust if your covered area differs.
+                    Sheet reference: ground-floor covered area is{" "}
+                    {resPlot.groundFloorAreaMin.toLocaleString()}–
+                    {resPlot.groundFloorAreaMax.toLocaleString()} Sq.ft; plot area is{" "}
+                    {resPlot.plotAreaMin.toLocaleString()}–{resPlot.plotAreaMax.toLocaleString()}{" "}
+                    Sq.ft. Enter total covered area (Ground + First Floor + Mumty).
                   </p>
                 </div>
-
               ) : (
                 <>
                   <div>
@@ -277,17 +209,15 @@ export function CalculatorFab() {
                       aria-label="Single floor covered area in square feet"
                     />
                     <p className="mt-2 text-[0.7rem] leading-relaxed text-muted-foreground">
-                      Rate applies per single floor — total covered area = single
-                      floor area × number of floors.
+                      Rate applies per single floor — total covered area = single floor area ×
+                      number of floors.
                     </p>
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between">
                       <p className={labelCls}>Number of floors *</p>
-                      <span className="text-sm font-bold text-primary">
-                        {floors}
-                      </span>
+                      <span className="text-sm font-bold text-primary">{floors}</span>
                     </div>
                     <input
                       type="number"
@@ -334,8 +264,7 @@ export function CalculatorFab() {
 
               <div className="rounded-xl border border-primary/40 bg-primary/10 p-5">
                 <p className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary">
-                  {plotLabel} ·{" "}
-                  {category === "residential" ? "Residential" : "Commercial"}
+                  {plotLabel} · {category === "residential" ? "Residential" : "Commercial"}
                 </p>
                 <p className="mt-1 text-center text-[0.7rem] text-muted-foreground">
                   Total covered area {totalArea.toLocaleString()} Sq.ft
@@ -357,13 +286,9 @@ export function CalculatorFab() {
                       >
                         <span className="text-muted-foreground">
                           {l.label}
-                          <span className="ml-1 opacity-70">
-                            @ {l.rate.toLocaleString()}/Sq.ft
-                          </span>
+                          <span className="ml-1 opacity-70">@ {l.rate.toLocaleString()}/Sq.ft</span>
                         </span>
-                        <span className="font-semibold text-foreground">
-                          {pkr(l.amount)}
-                        </span>
+                        <span className="font-semibold text-foreground">{pkr(l.amount)}</span>
                       </div>
                     ))
                   )}
