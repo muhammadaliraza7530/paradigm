@@ -40,26 +40,35 @@ export function ChatbotFab() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: next.filter((m) => m !== GREETING).map(({ role, content }) => ({ role, content })),
+          messages: next
+            .filter((m) => m !== GREETING)
+            .map(({ role, content }) => ({ role, content })),
         }),
       });
-      const data = (await res.json()) as { reply?: string; error?: string };
+      const contentType = res.headers.get("content-type") ?? "";
+      const data = contentType.includes("application/json")
+        ? ((await res.json()) as { reply?: string; error?: string })
+        : {};
+      if (!res.ok) {
+        throw new Error(data.error || `Request failed with status ${res.status}.`);
+      }
       setMessages((m) => [
         ...m,
         {
           role: "assistant",
           content:
-            data.reply ||
-            data.error ||
-            "Sorry, I couldn't respond. Please reach us on WhatsApp.",
+            data.reply || data.error || "Sorry, I couldn't respond. Please reach us on WhatsApp.",
         },
       ]);
-    } catch {
+    } catch (error) {
       setMessages((m) => [
         ...m,
         {
           role: "assistant",
-          content: "Network issue — please try again or contact us on WhatsApp.",
+          content:
+            error instanceof Error && error.message
+              ? error.message
+              : "Network issue — please try again or contact us on WhatsApp.",
         },
       ]);
     } finally {

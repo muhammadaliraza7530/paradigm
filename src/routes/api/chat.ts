@@ -18,10 +18,32 @@ const json = (payload: unknown, status = 200) =>
     headers: { "Content-Type": "application/json" },
   });
 
-// Direct Google Gemini call (uses GEMINI_API_KEY — works on Vercel)
-async function callGemini(apiKey: string, messages: ChatMessage[]) {
+type RuntimeEnv = Record<string, unknown>;
+
+function getServerValue(name: string) {
+  const runtimeEnv = globalThis.__PARADIGM_RUNTIME_ENV as RuntimeEnv | undefined;
+  const processValue = typeof process !== "undefined" ? process.env[name] : undefined;
+
+  if (typeof runtimeEnv?.[name] === "string" && runtimeEnv[name]) {
+    return { value: runtimeEnv[name] as string, source: "runtime binding" };
+  }
+  if (processValue) return { value: processValue, source: "process.env" };
+  return { value: undefined, source: "missing" };
+}
+
+function environmentStatus() {
+  const processAvailable = typeof process !== "undefined";
+  const runtimeEnv = globalThis.__PARADIGM_RUNTIME_ENV as RuntimeEnv | undefined;
+  return {
+    nodeProcessAvailable: processAvailable,
+    runtimeBindingAvailable: Boolean(runtimeEnv),
+    nodeEnv: processAvailable ? (process.env.NODE_ENV ?? "unknown") : "unavailable",
+  };
+}
+
+async function callGemini(apiKey: string, messages: ChatMessage[], systemPrompt: string) {
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${getServerValue("GEMINI_MODEL").value || "gemini-3.6-flash"}:generateContent`,
     {
       method: "POST",
       headers: {
@@ -29,7 +51,7 @@ async function callGemini(apiKey: string, messages: ChatMessage[]) {
         "x-goog-api-key": apiKey,
       },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM }] },
+        system_instruction: { parts: [{ text: systemPrompt }] },
         contents: messages.map((m) => ({
           role: m.role === "assistant" ? "model" : "user",
           parts: [{ text: m.content }],
@@ -54,8 +76,7 @@ async function callGemini(apiKey: string, messages: ChatMessage[]) {
   return { status: 200, reply };
 }
 
-// Fallback: Lovable AI gateway (uses LOVABLE_API_KEY)
-async function callLovableGateway(apiKey: string, messages: ChatMessage[]) {
+async function callLovableGateway(apiKey: string, messages: ChatMessage[], systemPrompt: string) {
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -65,7 +86,7 @@ async function callLovableGateway(apiKey: string, messages: ChatMessage[]) {
     },
     body: JSON.stringify({
       model: "google/gemini-3.7-flash",
-      messages: [{ role: "system", content: SYSTEM }, ...messages],
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
     }),
   });
   if (!res.ok) {
@@ -83,21 +104,66 @@ export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = (await request.json()) as { messages?: ChatMessage[] };
-        const messages = Array.isArray(body.messages) ? body.messages.slice(-20) : [];
+        const currentDate = new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        const systemPrompt = `${SYSTEM}
+Today's date is ${currentDate}. Use this date when answering time-sensitive questions about today, dates, deadlines, or relative times such as "tomorrow" and "next week".`;
+        const gemini = getServerValue("GEMINI_API_KEY");
+        const lovable = getServerValue("LOVABLE_API_KEY");
+        const isDevelopment =
+          typeof process === "undefined" || process.env.NODE_ENV !== "production";
+        console.log(
+          "[/api/chat] GEMINI_API_KEY is",
+          gemini.value ? `defined (${gemini.source})` : "missing",
+        );
+
+        let body: { messages?: unknown };
+        try {
+          body = (await request.json()) as { messages?: unknown };
+        } catch {
+          return json({ error: "Request body must be valid JSON." }, 400);
+        }
+
+        const messages = Array.isArray(body.messages)
+          ? body.messages
+              .filter(
+                (message): message is ChatMessage =>
+                  typeof message === "object" &&
+                  message !== null &&
+                  ((message as ChatMessage).role === "user" ||
+                    (message as ChatMessage).role === "assistant") &&
+                  typeof (message as ChatMessage).content === "string" &&
+                  (message as ChatMessage).content.trim().length > 0,
+              )
+              .slice(-20)
+          : [];
         if (messages.length === 0) {
           return json({ error: "No messages provided." }, 400);
         }
 
-        const geminiKey = process.env["GEMINI_API_KEY"];
-        const lovableKey = process.env["LOVABLE_API_KEY"];
+        const geminiKey = gemini.value;
+        const lovableKey = lovable.value;
         if (!geminiKey && !lovableKey) {
-          return json({ error: "AI is not configured." }, 500);
+          const response: { error: string; environment?: ReturnType<typeof environmentStatus> } = {
+            error: "AI is not configured. Set GEMINI_API_KEY or LOVABLE_API_KEY on the server.",
+          };
+          if (isDevelopment) response.environment = environmentStatus();
+          return json(response, 503);
         }
 
-        const result = geminiKey
-          ? await callGemini(geminiKey, messages)
-          : await callLovableGateway(lovableKey!, messages);
+        let result: { status: number; reply: string | null };
+        try {
+          result = geminiKey
+            ? await callGemini(geminiKey, messages, systemPrompt)
+            : await callLovableGateway(lovableKey!, messages, systemPrompt);
+        } catch (error) {
+          console.error("Primary AI provider failed", error);
+          result = { status: 503, reply: null };
+        }
 
         if (result.reply) {
           return json({ reply: result.reply });
@@ -105,8 +171,12 @@ export const Route = createFileRoute("/api/chat")({
 
         // Gemini failed — try the Lovable gateway as a backup
         if (geminiKey && lovableKey) {
-          const backup = await callLovableGateway(lovableKey, messages);
-          if (backup.reply) return json({ reply: backup.reply });
+          try {
+            const backup = await callLovableGateway(lovableKey, messages, systemPrompt);
+            if (backup.reply) return json({ reply: backup.reply });
+          } catch (error) {
+            console.error("Backup AI provider failed", error);
+          }
         }
 
         const message =
@@ -114,8 +184,8 @@ export const Route = createFileRoute("/api/chat")({
             ? "Too many requests right now — please try again in a moment."
             : result.status === 402
               ? "AI usage limit reached. Please contact us on WhatsApp instead."
-              : `Assistant unavailable (${result.status}).`;
-        return json({ error: message }, result.status === 429 ? 429 : 500);
+              : "The assistant is temporarily unavailable. Please try again or contact us on WhatsApp.";
+        return json({ error: message }, result.status === 429 ? 429 : 503);
       },
     },
   },
