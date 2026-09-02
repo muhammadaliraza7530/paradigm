@@ -7,8 +7,7 @@ type Category = "residential" | "commercial";
 
 type ResidentialPlot = {
   label: string;
-  min: number;
-  max: number;
+  area: number;
   grey: number;
   finishing: number;
   mep: number;
@@ -22,15 +21,18 @@ type CommercialPlot = {
   finishing: number;
 };
 
+// Residential: Covered Area already includes Ground + First Floor + Mumty
 const RESIDENTIAL: ResidentialPlot[] = [
-  { label: "3 Marla", min: 575, max: 735, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
-  { label: "5 Marla", min: 900, max: 1150, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
-  { label: "7 Marla", min: 1180, max: 1520, grey: 5500, finishing: 7000, mep: 4800, furnishing: 4000 },
-  { label: "10 Marla", min: 1575, max: 2040, grey: 5800, finishing: 7300, mep: 4800, furnishing: 4000 },
-  { label: "1 Kanal", min: 2925, max: 3800, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
-  { label: "2 Kanal", min: 4950, max: 6500, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
+  { label: "3 Marla", area: 1430, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
+  { label: "5 Marla", area: 1900, grey: 5000, finishing: 6500, mep: 4500, furnishing: 4000 },
+  { label: "7 Marla", area: 2450, grey: 5500, finishing: 7000, mep: 4800, furnishing: 4000 },
+  { label: "10 Marla", area: 2900, grey: 5800, finishing: 7300, mep: 4800, furnishing: 4000 },
+  { label: "12 Marla", area: 3500, grey: 5800, finishing: 7300, mep: 4800, furnishing: 4000 },
+  { label: "1 Kanal", area: 5000, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
+  { label: "2 Kanal", area: 7800, grey: 6000, finishing: 7800, mep: 4800, furnishing: 4500 },
 ];
 
+// Commercial: rate applies per single floor; total = area per floor x floors
 const COMMERCIAL: CommercialPlot[] = [
   { label: "3.5 Marla", area: 1430, grey: 2800, finishing: 3500 },
   { label: "5 Marla", area: 1900, grey: 2800, finishing: 3500 },
@@ -40,6 +42,7 @@ const COMMERCIAL: CommercialPlot[] = [
   { label: "1 Kanal", area: 5000, grey: 2750, finishing: 3300 },
   { label: "2 Kanal", area: 7800, grey: 2750, finishing: 3300 },
 ];
+
 
 const RES_SCOPES = [
   { id: "grey", label: "Grey Structure" },
@@ -64,7 +67,7 @@ export function CalculatorFab() {
   const [category, setCategory] = useState<Category>("residential");
   const [resIdx, setResIdx] = useState(3);
   const [comIdx, setComIdx] = useState(2);
-  const [resArea, setResArea] = useState(RESIDENTIAL[3].min);
+  const [resArea, setResArea] = useState(RESIDENTIAL[3].area);
   const [comArea, setComArea] = useState(COMMERCIAL[2].area);
   const [floors, setFloors] = useState(2);
   const [resScopes, setResScopes] = useState<ResScope[]>(["grey", "finishing"]);
@@ -82,7 +85,7 @@ export function CalculatorFab() {
 
   const selectRes = (i: number) => {
     setResIdx(i);
-    setResArea(RESIDENTIAL[i].min);
+    setResArea(RESIDENTIAL[i].area);
   };
   const selectCom = (i: number) => {
     setComIdx(i);
@@ -94,7 +97,7 @@ export function CalculatorFab() {
 
   const { lines, total, totalArea } = useMemo(() => {
     if (category === "residential") {
-      const area = Math.min(Math.max(resArea, resPlot.min), resPlot.max);
+      const area = Math.max(resArea, 0);
       const items = RES_SCOPES.filter((s) => resScopes.includes(s.id)).map((s) => ({
         label: s.label,
         rate: resPlot[s.id],
@@ -107,6 +110,7 @@ export function CalculatorFab() {
         totalArea: area,
       };
     }
+
     const area = comArea * floors;
     const items = COM_SCOPES.filter((s) => comScopes.includes(s.id)).map((s) => ({
       label: s.label,
@@ -234,27 +238,27 @@ export function CalculatorFab() {
               {category === "residential" ? (
                 <div>
                   <div className="flex items-center justify-between">
-                    <p className={labelCls}>Covered area</p>
+                    <p className={labelCls}>Total covered area</p>
                     <span className="text-sm font-bold text-primary">
                       {resArea.toLocaleString()} Sq.ft
                     </span>
                   </div>
                   <input
-                    type="range"
-                    min={resPlot.min}
-                    max={resPlot.max}
+                    type="number"
+                    min={100}
                     step={5}
                     value={resArea}
-                    onChange={(e) => setResArea(Number(e.target.value))}
-                    className="mt-3 w-full accent-primary"
-                    aria-label="Covered area in square feet"
+                    onChange={(e) => setResArea(Math.max(0, Number(e.target.value)))}
+                    className="mt-3 w-full rounded-lg border border-border bg-background/40 px-3 py-2.5 text-sm font-semibold text-foreground"
+                    aria-label="Total covered area in square feet"
                   />
                   <p className="mt-2 text-[0.7rem] leading-relaxed text-muted-foreground">
-                    Covered Area includes Ground, First Floor, and Mamty
-                    (typical range {resPlot.min.toLocaleString()}–
-                    {resPlot.max.toLocaleString()} Sq.ft).
+                    Standard {resPlot.label} covered area is{" "}
+                    {resPlot.area.toLocaleString()} Sq.ft (Ground + First Floor +
+                    Mumty). Adjust if your covered area differs.
                   </p>
                 </div>
+
               ) : (
                 <>
                   <div>

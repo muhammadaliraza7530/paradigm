@@ -16,6 +16,8 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { CallFloat } from "@/components/site/CallFloat";
 import { CalculatorFab } from "@/components/site/CalculatorFab";
+import { ChatbotFab } from "@/components/site/ChatbotFab";
+
 import { useScrollChoreography } from "@/hooks/use-scroll-choreography";
 
 
@@ -137,7 +139,9 @@ function RootComponent() {
         </main>
         <Footer />
         <CalculatorFab />
+        <ChatbotFab />
         <CallFloat />
+
       </div>
     </QueryClientProvider>
   );
